@@ -18,11 +18,20 @@ if __name__ == '__main__':
     i = 0
     GPU_HR = {}
     GPU_LIST = stat1[3].split(';')
-
+    GPU_POWER_FAN = stat1[6].split(';')
+    print(GPU_POWER_FAN)
     packet = []
     for i in range(len(GPU_LIST)):
         GPU_HR[i] = int(GPU_LIST[i]) * 1000
         packet.append(ZabbixMetric('fs1.zmrn.ru', f'GPU_{i}_claymor_hashrate', int(GPU_LIST[i]) * 1000))
     packet.append(ZabbixMetric('fs1.zmrn.ru', f'Total_power_usage_claymor_miner', int(stat2[17])))
+
+    for i in range(len(GPU_POWER_FAN)):
+        GPU_NUM = int(i / 2)
+        if GPU_NUM * 2 == i:
+            packet.append(ZabbixMetric('fs1.zmrn.ru', f'GPU_{GPU_NUM}_claymor_FanSpeed', GPU_POWER_FAN[i]))
+        else:
+            packet.append(ZabbixMetric('fs1.zmrn.ru', f'GPU_{GPU_NUM}_claymor_Temp', GPU_POWER_FAN[i]))
+
     zbx = ZabbixSender('192.168.1.101')
     zbx.send(packet)
