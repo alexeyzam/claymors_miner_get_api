@@ -17,16 +17,17 @@ if __name__ == '__main__':
     try:
         stat1 = get_miner_stat("miner_getstat1")
         stat2 = get_miner_stat("miner_getstat2")
-        packet.append(ZabbixMetric('fs1.zmrn.ru', f'claymor_live', 1))
+        packet.append(ZabbixMetric('fs1.zmrn.ru', 'claymor_live', 1))
         i = 0
         GPU_HR = {}
         GPU_LIST = stat1[3].split(';')
         GPU_POWER_FAN = stat1[6].split(';')
+        packet.append(ZabbixMetric('fs1.zmrn.ru', 'claymor_uptime', int(stat1[1])))
 
         for i in range(len(GPU_LIST)):
             GPU_HR[i] = int(GPU_LIST[i]) * 1000
             packet.append(ZabbixMetric('fs1.zmrn.ru', f'GPU_{i}_claymor_hashrate', int(GPU_LIST[i]) * 1000))
-        packet.append(ZabbixMetric('fs1.zmrn.ru', f'Total_power_usage_claymor_miner', int(stat2[17])))
+        packet.append(ZabbixMetric('fs1.zmrn.ru', 'Total_power_usage_claymor_miner', int(stat2[17])))
 
         for i in range(len(GPU_POWER_FAN)):
             GPU_NUM = int(i / 2)
@@ -39,6 +40,6 @@ if __name__ == '__main__':
         zbx = ZabbixSender('192.168.1.101')
         zbx.send(packet)
     except (ConnectionRefusedError, OSError):
-        packet.append(ZabbixMetric('fs1.zmrn.ru', f'claymor_live', 0))
+        packet.append(ZabbixMetric('fs1.zmrn.ru', 'claymor_live', 0))
         zbx = ZabbixSender('192.168.1.101')
         zbx.send(packet)
