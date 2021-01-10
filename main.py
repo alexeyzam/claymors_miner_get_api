@@ -5,7 +5,7 @@ from pyzabbix import ZabbixMetric, ZabbixSender
 
 def get_miner_stat(method):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('192.168.1.99', 3333))
+    s.connect(('192.168.1.99', 3335))
     s.sendall(json.dumps({"id": 0, "jsonrpc": "2.0", "method": method}).encode("utf-8"))
     data = json.loads(s.recv(1024).decode("utf-8"))['result']
     s.close()
